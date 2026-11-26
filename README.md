@@ -166,16 +166,16 @@ Antes de executar os testes externos, suba a API REST.
 
 ## Teste de carga com JMeter
 
-O plano `projetos/apiDePets-exercicio.jmx` contém dois grupos de carga, executados em paralelo:
+O plano `projetos/apiDePets-trabalho-parcial.jmx` contém dois grupos de carga, executados em paralelo:
 
 - **Carga fechada:** 3 usuários, com 5 iterações cada.
 - **Carga aberta:** taxa de 1 chegada por segundo durante 30 segundos, usando o Open Model Thread Group nativo do JMeter.
 
 Em cada iteração, o plano faz login com o usuário inicial `tiago` (`123456`), extrai o JWT da resposta e usa o token para cadastrar um pet (`POST /pets`) e consultar os pets (`GET /pets`). Os nomes dos pets incluem valores gerados durante o teste para evitar conflitos de cadastro.
 
-Inicie a API com `npm start` e abra `projetos/apiDePets-exercicio.jmx` no JMeter 5.6.3 ou superior. O host, a porta e as credenciais podem ser alterados nas variáveis definidas no Test Plan.
+Inicie a API com `npm start` e abra `projetos/apiDePets-trabalho-parcial.jmx` no JMeter 5.6.3 ou superior. O host, a porta e as credenciais podem ser alterados nas variáveis definidas no Test Plan.
 
-O plano inclui o listener **Summary Report**. Após iniciar o teste no JMeter, selecione esse listener na árvore à esquerda para acompanhar amostras, tempo médio, throughput e percentual de erros.
+O plano inclui dois listeners: **Aggregate Report**, para consultar métricas agregadas por requisição, e **Assertion Results**, para identificar falhas nas validações. Após iniciar o teste, selecione-os na árvore à esquerda.
 
 ## Observações
 
