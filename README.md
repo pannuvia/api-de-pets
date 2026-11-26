@@ -164,18 +164,26 @@ npm run test-rest-external
 
 Antes de executar os testes externos, suba a API REST.
 
-## Teste de carga com JMeter
+## Teste com JMeter
 
-O plano `projetos/apiDePets-exercicio.jmx` contém dois grupos de carga, executados em paralelo:
+O plano disponível é `projetos/apiDePets-aulas.jmx`. Ele define as variáveis `protocol=http`, `baseUrl=localhost` e `port=3000`.
 
-- **Carga fechada:** 3 usuários, com 5 iterações cada.
-- **Carga aberta:** taxa de 1 chegada por segundo durante 30 segundos, usando o Open Model Thread Group nativo do JMeter.
+O único grupo de threads ativo é um **Thread Group** padrão, configurado com 1 usuário, ramp-up de 1 segundo e 1 iteração. Em cada execução, ele:
 
-Em cada iteração, o plano faz login com o usuário inicial `tiago` (`123456`), extrai o JWT da resposta e usa o token para cadastrar um pet (`POST /pets`) e consultar os pets (`GET /pets`). Os nomes dos pets incluem valores gerados durante o teste para evitar conflitos de cadastro.
+1. Faz `POST /login` com o usuário `tiago` e a senha `123456`.
+2. Extrai `$.token` da resposta para a variável `tokenExtraido`.
+3. Faz `POST /pets` com o token Bearer e o corpo `{"name":"pretinha","type":"gato"}`.
 
-Inicie a API com `npm start` e abra `projetos/apiDePets-exercicio.jmx` no JMeter 5.6.3 ou superior. O host, a porta e as credenciais podem ser alterados nas variáveis definidas no Test Plan.
+Para executar, inicie a API com `npm start`, abra `projetos/apiDePets-aulas.jmx` no JMeter 5.6.3 e clique em **Start**. O listener ativo do grupo é **View Results Tree**. O **Summary Report** está desabilitado nesse grupo.
 
-O plano inclui o listener **Summary Report**. Após iniciar o teste no JMeter, selecione esse listener na árvore à esquerda para acompanhar amostras, tempo médio, throughput e percentual de erros.
+### Limitações do plano atual
+
+- O grupo `jp@gc - Ultimate Thread Group` está desabilitado, então não executa carga adicional.
+- O fluxo ativo não faz `GET /pets` e não configura modelos de carga aberta e fechada.
+- As asserções de resposta do fluxo ativo estão desabilitadas; em particular, `POST /pets` deveria retornar `201`.
+- O nome do pet é fixo (`pretinha`), então execuções repetidas sem reiniciar a API podem receber `409` se esse pet já existir para o usuário.
+
+Assim, este JMX documenta o fluxo que está ativo no arquivo, mas ainda não cobre sozinho todos os requisitos do exercício de carga.
 
 ## Observações
 
